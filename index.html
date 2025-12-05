@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema web moderno para gestão de eventos académicos da Comissão de Finalistas 25/26 da Universidade do Mindelo">
+    <meta name="keywords" content="calendário, eventos, universidade, unimindelo, finalistas, comité, gestão">
+    <meta name="author" content="Comissão de Finalistas 25/26 - Universidade do Mindelo">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:title" content="Calendário de Eventos - Comissão de Finalistas 25/26">
+    <meta property="og:description" content="Sistema moderno para gestão de eventos académicos da Universidade do Mindelo">
+    <meta property="og:image" content="user_input_files/Logo CF3.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="">
+    <meta property="twitter:title" content="Calendário de Eventos - Comissão de Finalistas 25/26">
+    <meta property="twitter:description" content="Sistema moderno para gestão de eventos académicos da Universidade do Mindelo">
+    <meta property="twitter:image" content="user_input_files/Logo CF3.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/Logo CF1 sem background.png">
+    <link rel="apple-touch-icon" href="user_input_files/Logo CF3.png">
+
+    <!-- Preload Critical Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700;800;900&display=swap" as="style">
+    
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Chart.js for Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">Carregando...</div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="assets/images/Logo CF3.png" alt="Comissão de Finalistas" class="logo">
+                    <span class="logo-text">Comissão de Finalistas 25/26</span>
+                </div>
+                
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#hero" class="nav-link">Início</a></li>
+                    <li><a href="#calendar" class="nav-link">Calendário</a></li>
+                    <li><a href="#gallery" class="nav-link">Galeria</a></li>
+                    <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                    <li><a href="#about" class="nav-link">Sobre</a></li>
+                </ul>
+                
+                <div class="nav-actions">
+                    <button class="btn-primary" onclick="scrollToSection('calendar')">
+                        <i class="fas fa-plus"></i>
+                        Novo Evento
+                    </button>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-background">
+            <div class="hero-gradient"></div>
+            <div class="hero-glow-1"></div>
+            <div class="hero-glow-2"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Comissão de Finalistas 25/26</h1>
+                <p class="hero-subtitle">Planeamento de eventos e marcos</p>
+                <p class="hero-description">
+                    Sistema integrado para gestão de eventos académicos da Universidade do Mindelo. 
+                    Organize, monitore e execute os eventos mais importantes do ano letivo.
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="total-events">0</div>
+                        <div class="stat-label">Eventos Planeados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="completed-events">0</div>
+                        <div class="stat-label">Concluídos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="upcoming-events">0</div>
+                        <div class="stat-label">Próximos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section (Calendar + Roadmap Toggle) -->
+    <section class="calendar-section" id="calendar">
+        <div class="container">
+            <!-- Toggle Tabs -->
+            <div class="view-toggle-container">
+                <div class="view-toggle">
+                    <button class="view-toggle-btn active" id="btn-calendar-view" onclick="showCalendarView()">
+                        <i class="fas fa-calendar-alt"></i>
+                        Calendário
+                    </button>
+                    <button class="view-toggle-btn" id="btn-roadmap-view" onclick="showRoadmapView()">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Jornada Finalista
+                    </button>
+                </div>
+                <button class="btn-primary" onclick="openEventModal()">
+                    <i class="fas fa-plus"></i>
+                    Novo Evento
+                </button>
+            </div>
+
+            <!-- Calendar View Container -->
+            <div id="calendar-view-container" class="view-container active">
+                <div class="section-header">
+                    <h2 class="section-title">Calendário de Eventos</h2>
+                    <p class="section-subtitle">Gerencie todos os eventos académicos e sociais</p>
+                </div>
+
+                <!-- Calendar Controls -->
+                <div class="calendar-controls">
+                    <div class="calendar-navigation">
+                        <button class="nav-btn active" onclick="changeCalendarView('month')" id="btn-month">
+                            <i class="fas fa-calendar"></i>
+                            Mensal
+                        </button>
+                        <button class="nav-btn" onclick="changeCalendarView('quarter')" id="btn-quarter">
+                            <i class="fas fa-calendar-alt"></i>
+                            Trimestral
+                        </button>
+                        <button class="nav-btn" onclick="changeCalendarView('year')" id="btn-year">
+                            <i class="fas fa-calendar-day"></i>
+                            Anual
+                        </button>
+                    </div>
+
+                    <div class="calendar-filters">
+                        <select class="filter-select" id="status-filter" onchange="filterEvents()">
+                            <option value="">Todos os Status</option>
+                            <option value="pending">Pendente</option>
+                            <option value="current">Em Progresso</option>
+                            <option value="completed">Concluído</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Calendar View -->
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="calendar-nav-btn" onclick="previousPeriod()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h3 class="calendar-title" id="calendar-title">Dezembro 2025</h3>
+                        <button class="calendar-nav-btn" onclick="nextPeriod()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roadmap View Container -->
+            <div id="roadmap-view-container" class="view-container">
+                <div class="section-header">
+                    <div class="roadmap-title-container inline">
+                        <div class="treasure-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L15 8H21L16 12L18 19L12 15L6 19L8 12L3 8H9L12 2Z"/>
+                            </svg>
+                        </div>
+                        <h2 class="section-title">Jornada Finalista 25/26</h2>
+                        <div class="treasure-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L15 8H21L16 12L18 19L12 15L6 19L8 12L3 8H9L12 2Z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="section-subtitle">Do início ao tesouro final: nossa aventura académica</p>
+                </div>
+
+                <div class="roadmap-scroll-wrapper">
+                    <div class="roadmap-scroll-container">
+                        <div class="roadmap-container" id="roadmap-inline-container">
+                            <div class="roadmap-progress-bar">
+                                <div class="roadmap-progress-fill" id="roadmap-progress-inline"></div>
+                            </div>
+                            <div class="roadmap-path" id="roadmap-path-inline">
+                                <!-- SVG Path will be generated by JS -->
+                            </div>
+                            <div class="roadmap-milestones" id="roadmap-milestones-inline">
+                                <!-- Milestones will be generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="roadmap-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot completed"></span>
+                        <span>Concluído</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot current"></span>
+                        <span>Em Andamento</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot pending"></span>
+                        <span>Pendente</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot final"></span>
+                        <span>Meta Final</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Galeria de Eventos</h2>
+                <p class="section-subtitle">Momentos e memórias dos nossos eventos</p>
+            </div>
+            
+            <div class="gallery-grid" id="gallery-grid">
+                <div class="gallery-item" data-category="academic">
+                    <img src="assets/images/Logo CF3.png" alt="Logo Comissão">
+                    <div class="gallery-overlay">
+                        <h4>Identidade Visual</h4>
+                        <p>Logotipos oficiais da comissão</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="welcome">
+                    <img src="assets/images/Cartaz boas vindas (1080 x 1080 px).png" alt="Cartaz de Boas-vindas">
+                    <div class="gallery-overlay">
+                        <h4>Cartaz de Boas-vindas</h4>
+                        <p>Evento de receção aos novos finalistas</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="tournament">
+                    <img src="assets/images/2.png" alt="Tarde Infantil">
+                    <div class="gallery-overlay">
+                        <h4>Tarde Infantil</h4>
+                        <p>Atividade com crianças</p>
+                    </div>
+                </div>
+                <div class="gallery-item" data-category="tournament">
+                    <img src="assets/images/4.capa.png" alt="Torneio Inter-Instituições">
+                    <div class="gallery-overlay">
+                        <h4>Torneio Inter-Instituições</h4>
+                        <p>Competir, Vibrar e Ganhar!</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section" id="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Dashboard de Estatísticas</h2>
+                <p class="section-subtitle">Análise do progresso dos eventos</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progresso Mensal</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyProgressChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-pie-chart"></i>
+                    </div>
+                    <h3>Distribuição por Status</h3>
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Carga de Trabalho</h3>
+                    <div class="chart-container">
+                        <canvas id="workloadChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>Sobre a Comissão de Finalistas</h2>
+                    <p>
+                        A Comissão de Finalistas 25/26 UM é responsável pela organização e execução 
+                        de todos os eventos académicos e sociais destinados aos estudantes finalistas 
+                        da Universidade do Mindelo.
+                    </p>
+                    <p>
+                        O nosso objetivo é criar experiências memoráveis que marquem o final da 
+                        jornada académica dos nossos estudantes, promovendo a união, o espírito 
+                        académico e a preparação para o mundo profissional.
+                    </p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5b6bab8bca6a6b4ba95a0bbbcb8bcbbb1b0b9bafbb0b1a0"><span class="__cf_email__" data-cfemail="f39095869ec1c5b39b9c879e929a9fdd909c9e">cfum26@hotmail.com&#160;</span>&#160;</a></span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+238 5831165</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Universidade do Mindelo, Cabo Verde</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-logo">
+                    <img src="assets/images/Logo CF1 sem background.png" alt="Universidade Unimindelo" class="university-logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/images/Logo CF3.png" alt="Comissão de Finalistas" class="footer-logo-img">
+                    <span class="footer-text">Comissão de Finalistas 25/26</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#hero">Início</a>
+                    <a href="#calendar">Calendário</a>
+                    <a href="#gallery">Galeria</a>
+                    <a href="#dashboard">Dashboard</a>
+                    <a href="#about">Sobre</a>
+                </div>
+                <div class="footer-social">
+                    <a href="https://www.facebook.com/profile.php?id=61583388196224" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/cfum26/" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Comissão de Finalistas 25/26 - Universidade Unimindelo. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Gallery Modal -->
+    <div class="modal-overlay" id="gallery-modal-overlay" onclick="closeGalleryModal(event)">
+        <div class="gallery-modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeGalleryModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="gallery-modal-image" src="" alt="">
+        </div>
+    </div>
+
+    <!-- Event Detail Modal (Unified for Calendar & Roadmap) -->
+    <div class="modal-overlay" id="roadmap-event-modal-overlay" onclick="closeRoadmapEventModal(event)">
+        <div class="roadmap-event-modal" onclick="event.stopPropagation()">
+            <!-- Content generated dynamically by JS -->
+        </div>
+    </div>
+
+    <!-- Milestone Edit Modal -->
+    <div class="modal-overlay" id="milestone-edit-modal-overlay" onclick="closeEditModal()">
+        <!-- Content generated dynamically by JS -->
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
+    
+    <!-- Additional Advanced Features -->
+    <script>
+        // Notification System
+        class NotificationSystem {
+            constructor() {
+                this.notifications = [];
+                this.container = null;
+                this.createContainer();
+            }
+            
+            createContainer() {
+                this.container = document.createElement('div');
+                this.container.id = 'notification-container';
+                this.container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    max-width: 400px;
+                `;
+                document.body.appendChild(this.container);
+            }
+            
+            show(message, type = 'info', duration = 5000) {
+                const notification = this.createNotificationElement(message, type);
+                this.container.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                    notification.style.opacity = '1';
+                }, 10);
+                
+                setTimeout(() => {
+                    this.remove(notification);
+                }, duration);
+                
+                this.notifications.push(notification);
+                return notification;
+            }
+            
+            createNotificationElement(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                
+                const colors = {
+                    success: '#22C55E',
+                    error: '#EF4444',
+                    warning: '#FACC15',
+                    info: '#00F2FF'
+                };
+                
+                notification.style.cssText = `
+                    background: var(--bg-surface);
+                    color: var(--text-primary);
+                    padding: 16px 20px;
+                    margin-bottom: 10px;
+                    border-radius: 8px;
+                    border-left: 4px solid ${colors[type]};
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                    transform: translateX(100%);
+                    opacity: 0;
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                `;
+                
+                const icon = this.getIcon(type);
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="${icon}" style="color: ${colors[type]}; font-size: 18px;"></i>
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" 
+                                style="background: none; border: none; color: var(--text-dim); 
+                                       cursor: pointer; margin-left: auto;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                return notification;
+            }
+            
+            getIcon(type) {
+                const icons = {
+                    success: 'fas fa-check-circle',
+                    error: 'fas fa-exclamation-circle',
+                    warning: 'fas fa-exclamation-triangle',
+                    info: 'fas fa-info-circle'
+                };
+                return icons[type] || icons.info;
+            }
+            
+            remove(notification) {
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }
+        }
+
+        // Enhanced Keyboard Shortcuts
+        class KeyboardShortcuts {
+            constructor() {
+                this.shortcuts = new Map();
+                this.init();
+            }
+            
+            init() {
+                this.registerDefaultShortcuts();
+                document.addEventListener('keydown', this.handleKeydown.bind(this));
+            }
+            
+            registerDefaultShortcuts() {
+                this.register('ctrl+n', () => openEventModal());
+                this.register('ctrl+e', () => exportToCalendar());
+                this.register('ctrl+f', () => this.focusSearch());
+                this.register('escape', () => this.closeModals());
+            }
+            
+            register(key, callback) {
+                this.shortcuts.set(key, callback);
+            }
+            
+            handleKeydown(event) {
+                const key = this.getKeyString(event);
+                const callback = this.shortcuts.get(key);
+                
+                if (callback && !event.target.matches('input, textarea')) {
+                    event.preventDefault();
+                    callback();
+                }
+            }
+            
+            getKeyString(event) {
+                const parts = [];
+                if (event.ctrlKey) parts.push('ctrl');
+                if (event.altKey) parts.push('alt');
+                if (event.shiftKey) parts.push('shift');
+                parts.push(event.key.toLowerCase());
+                return parts.join('+');
+            }
+            
+            focusSearch() {
+                const searchInput = document.querySelector('input[type="text"]');
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+            
+            closeModals() {
+                const modals = document.querySelectorAll('.modal-overlay.show');
+                modals.forEach(modal => modal.classList.remove('show'));
+            }
+        }
+
+        // Initialize advanced features when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize notification system
+            window.notificationSystem = new NotificationSystem();
+            
+            // Initialize keyboard shortcuts
+            window.keyboardShortcuts = new KeyboardShortcuts();
+            
+            // Add loading states to buttons
+            document.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (!this.classList.contains('btn-loading')) {
+                        this.classList.add('btn-loading');
+                        setTimeout(() => {
+                            this.classList.remove('btn-loading');
+                        }, 1000);
+                    }
+                });
+            });
+            
+            // Add smooth scroll behavior for better UX
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Show welcome notification
+            setTimeout(() => {
+                notificationSystem.show('Bem-vindo ao Sistema de Calendário! Use Ctrl+N para adicionar um novo evento.', 'info', 8000);
+            }, 3000);
+        });
+        
+        // Add global CSS for loading states
+        const style = document.createElement('style');
+        style.textContent = `
+            .btn-loading {
+                opacity: 0.7;
+                cursor: not-allowed;
+                position: relative;
+            }
+            
+            .btn-loading::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 20px;
+                height: 20px;
+                margin: -10px 0 0 -10px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
